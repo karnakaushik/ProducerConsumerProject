@@ -3,18 +3,19 @@
 #include<semaphore.h>
 
 pthread_mutex_t mutex;
-pthread_t t_prod,t_cons;
+pthread_t t_prod[10],t_cons[10];
 sem_t s_full,s_empty;
-int size=5;
 
 int count=0;
 int list[5];
 
 void *producer(void *x ){
-  int ins=5;
+  printf("\nEnter the number to be produced : ");
+  int ins;
+  scanf("%d",&ins);
   sem_wait(&s_empty);
   pthread_mutex_lock(&mutex);
-  printf("Item produced is %d\n",ins );
+  printf("\nItem produced is %d\n",ins );
   list[count++]=ins;
   pthread_mutex_unlock(&mutex);
   sem_post(&s_full);
@@ -34,8 +35,25 @@ void *consumer(void *x)
 void main (){
   sem_init(&s_full,0,0);
   sem_init(&s_empty,0,5);
-  pthread_create(&t_prod,NULL,producer,NULL);
-  pthread_join(t_prod,NULL);
-  pthread_create(&t_cons,NULL,producer,NULL);
-  pthread_join(t_cons,NULL);
+  int i,j;
+  printf("\nHow many items would you like to produce :  ");
+  scanf("%d",&i);
+  printf("\nHow many items woudld you like to consume :  ");
+  scanf("%d",&j);
+  for(int x=0;x<i;x++)
+  {
+  pthread_create(&t_prod[x],NULL,producer,NULL);
+  }
+  for(int x=0;x<i;x++)
+  {
+  pthread_join(t_prod[x],NULL);
+  }
+  for(int x=0;x<j;x++)
+  {  
+  pthread_create(&t_cons[x],NULL,consumer,NULL);
+  }
+  for(int x=0;x<j;x++)
+  {
+  pthread_join(t_cons[x],NULL);
+  }
 }
