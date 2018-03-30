@@ -1,13 +1,14 @@
 #include<stdio.h>
 #include<pthread.h>
 #include<semaphore.h>
+# define size 5
 
 pthread_mutex_t mutex;
 pthread_t t_prod[10],t_cons[10],t_test;
 sem_t s_full,s_empty;
 
 int count=0;
-int list[5];
+int list[size];
 
 void *producer(void *x ){
   printf("\nEnter the number to be produced : ");
@@ -22,6 +23,7 @@ void *producer(void *x ){
   list[count++]=ins;
   pthread_mutex_unlock(&mutex);
   sem_post(&s_full);
+  pthread_exit(NULL);
 }
 
 void *consumer(void *x)
@@ -35,6 +37,7 @@ void *consumer(void *x)
   printf("Item consumed is %d\n",del);
   pthread_mutex_unlock(&mutex);
   sem_post(&s_empty);
+  pthread_exit(NULL);
 }
 
 void main (){
@@ -54,8 +57,13 @@ void main (){
   }
   printf("\nHow many items woudld you like to consume :  ");
   scanf("%d",&j);
+  
   for(int x=0;x<j;x++)
   {  
+  if(x>i){
+  printf("\nCannot Consume Items more than Produced So exiting Now...\n");
+  break;
+  }
   pthread_create(&t_cons[x],NULL,consumer,NULL);
   sleep(1);
   }
