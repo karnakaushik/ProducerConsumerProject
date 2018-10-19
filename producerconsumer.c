@@ -11,7 +11,7 @@ int count=0;
 int list[size];
 
 void *producer(void *x ){
-  printf("\nEnter the number to be produced : ");
+  printf("\nEnter the number to be produced ");
   int ins;
   scanf("%d",&ins);
   /* For test case if want to check that we can run more producer
